@@ -3,9 +3,6 @@
 // Helper functions for accessing the mural API. {{clientSecret}}
 var Parse = require('parse/node').Parse;
 
-const httpsRequest = require('./httpsRequest'); // Returns a promise that fulfills iff this user id is valid.
-
-
 function validateAuthData(authData) {
   return verifyIdToken(authData)
 } // Returns a promise that fulfills iff this app id is valid.

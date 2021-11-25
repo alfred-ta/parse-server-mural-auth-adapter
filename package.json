@@ -1,6 +1,6 @@
 {
   "name": "parse-server-mural-auth-adapter",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Autenticate to parse server with Mural",
   "main": "lib/index.js",
   "scripts": {
