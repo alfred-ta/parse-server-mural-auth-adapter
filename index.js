@@ -2,6 +2,7 @@
 
 // Helper functions for accessing the mural API. {{clientSecret}}
 var Parse = require('parse/node').Parse;
+const axios = require('axios');
 
 function validateAuthData(authData) {
   return verifyIdToken(authData)
@@ -13,17 +14,21 @@ function validateAppId() {
 } // A promisey wrapper for api requests
 
 async function verifyIdToken({ access_token, id }) {
-  const data =  await fetch('https://app.mural.co/api/public/v1/users/me', {
-    headers: {
-      Authorization: 'bearer ' + access_token,
-      'User-Agent': 'parse-server'
+  try {
+    const data = await axios.get('https://app.mural.co/api/public/v1/users/me', {
+      headers: {
+        'Authorization': `Bearer ${access_token}`
+      }
+    });
+    
+    if (data && data.value && data.value.id == id) {
+      return;
     }
-  });
-  
-  if (data && data.value && data.value.id == id) {
-    return;
+    throw new Parse.Error(Parse.Error.OBJECT_NOT_FOUND, 'Mural auth is invalid for this user.');
+  } catch(error) {
+    console.log('Error in silence', error);
+    return error;
   }
-  throw new Parse.Error(Parse.Error.OBJECT_NOT_FOUND, 'Mural auth is invalid for this user.');
 }
 
 module.exports = {
