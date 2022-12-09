@@ -13,9 +13,10 @@ function validateAppId() {
   return Promise.resolve();
 } // A promisey wrapper for api requests
 
-async function verifyIdToken({ access_token, id }) {
+async function verifyIdToken({ access_token, id, domain }) {
   try {
-    const data = await axios.get('https://app.mural.co/api/public/v1/users/me', {
+    const muralDomain = domain || 'ext-env.mural.engineering';
+    const data = await axios.get(`https://${muralDomain}/api/public/v1/users/me`, {
       headers: {
         'Authorization': `Bearer ${access_token}`
       }
