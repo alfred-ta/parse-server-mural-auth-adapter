@@ -3,6 +3,7 @@
 // Helper functions for accessing the mural API. {{clientSecret}}
 var Parse = require('parse/node').Parse;
 const axios = require('axios');
+const MURAL_HOST = 'app.mural.co';
 
 function validateAuthData(authData) {
   return verifyIdToken(authData)
@@ -13,23 +14,34 @@ function validateAppId() {
   return Promise.resolve();
 } // A promisey wrapper for api requests
 
-async function verifyIdToken({ accessToken, id, domain }) {
-  const muralDomain = domain || 'app.mural.co';
-  const url = `https://${muralDomain}/api/public/v1/users/me`;
-  try {
-    const res = await axios.get(url, {
-      headers: {
-        'Authorization': `Bearer ${accessToken}`
-      }
-    });
+const prepareAxiosErrorMessage = (error, additionalMessage) =>
+  `${error.response.data.error_description || error.message} ${
+    additionalMessage ? additionalMessage : ""
+  }`;
 
-    console.log('response', res)
+const muralPublicMe = async (token) => {
+  try {
+    const res = await axios.get(
+      `https://${MURAL_HOST}/api/public/v1/users/me`,
+      { headers: { Authorization: `Bearer ${token}` } },
+    );
+
+    return res.data;
+  } catch (error) {
+    throw new Error(prepareAxiosErrorMessage(error));
+  }
+};
+
+async function verifyIdToken({ accessToken, id }) {
+  try {
+    const data = await muralPublicMe(accessToken);
     
-    if (res.data && res.data.value && res.data.value.id == id) {
+    if (data.value.id == id) {
       return;
     }
   } catch(error) {
-    console.log('Error in silence', url, error);
+    console.log('Error in silence', error);
+    throw error;
   } finally {
     throw new Parse.Error(Parse.Error.OBJECT_NOT_FOUND, 'Mural auth is invalid for this user.');
   }
