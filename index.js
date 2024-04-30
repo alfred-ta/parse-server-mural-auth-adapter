@@ -17,19 +17,20 @@ async function verifyIdToken({ accessToken, id, domain }) {
   const muralDomain = domain || 'app.mural.co';
   const url = `https://${muralDomain}/api/public/v1/users/me`;
   try {
-    const data = await axios.get(url, {
+    const res = await axios.get(url, {
       headers: {
         'Authorization': `Bearer ${accessToken}`
       }
     });
+
+    console.log('response', res)
     
-    console.log('more response data=======', data)
-    if (data && data.value && data.value.id == id) {
+    if (res.data && res.data.value && res.data.value.id == id) {
       return;
     }
-    throw new Parse.Error(Parse.Error.OBJECT_NOT_FOUND, 'Mural auth is invalid for this user.');
   } catch(error) {
     console.log('Error in silence', url, error);
+  } finally {
     throw new Parse.Error(Parse.Error.OBJECT_NOT_FOUND, 'Mural auth is invalid for this user.');
   }
 }
