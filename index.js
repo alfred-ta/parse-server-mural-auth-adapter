@@ -33,18 +33,16 @@ const muralPublicMe = async (token) => {
 };
 
 async function verifyIdToken({ accessToken, id }) {
+  let data;
   try {
-    const data = await muralPublicMe(accessToken);
-    
-    if (data.value.id == id) {
-      return;
-    }
+    data = await muralPublicMe(accessToken);
   } catch(error) {
-    console.log('Error in silence', error);
     throw error;
-  } finally {
-    throw new Parse.Error(Parse.Error.OBJECT_NOT_FOUND, 'Mural auth is invalid for this user.');
   }
+  if (data.value.id === id) {
+    return;
+  }
+  throw new Parse.Error(Parse.Error.OBJECT_NOT_FOUND, 'Mural auth is invalid for this user.', data);
 }
 
 module.exports = {
