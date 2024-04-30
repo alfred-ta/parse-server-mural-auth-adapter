@@ -28,7 +28,7 @@ curl -X POST \
   -d '{
     "authData": {
     	"mural": {
-    		"access_token": "{{access_token}}",
+    		"accessToken": "{{accessToken}}",
     		"id": "{{MuralUID}}"
     	}
     }
