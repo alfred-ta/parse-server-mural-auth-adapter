@@ -14,20 +14,22 @@ function validateAppId() {
 } // A promisey wrapper for api requests
 
 async function verifyIdToken({ accessToken, id, domain }) {
+  const muralDomain = domain || 'app.mural.co';
+  const url = `https://${muralDomain}/api/public/v1/users/me`;
   try {
-    const muralDomain = domain || 'ext-env.mural.engineering';
-    const data = await axios.get(`https://${muralDomain}/api/public/v1/users/me`, {
+    const data = await axios.get(url, {
       headers: {
         'Authorization': `Bearer ${accessToken}`
       }
     });
     
+    console.log('more response data=======', data)
     if (data && data.value && data.value.id == id) {
       return;
     }
     throw new Parse.Error(Parse.Error.OBJECT_NOT_FOUND, 'Mural auth is invalid for this user.');
   } catch(error) {
-    console.log('Error in silence', error);
+    console.log('Error in silence', url, error);
     throw new Parse.Error(Parse.Error.OBJECT_NOT_FOUND, 'Mural auth is invalid for this user.');
   }
 }
