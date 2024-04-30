@@ -13,12 +13,12 @@ function validateAppId() {
   return Promise.resolve();
 } // A promisey wrapper for api requests
 
-async function verifyIdToken({ access_token, id, domain }) {
+async function verifyIdToken({ accessToken, id, domain }) {
   try {
     const muralDomain = domain || 'ext-env.mural.engineering';
     const data = await axios.get(`https://${muralDomain}/api/public/v1/users/me`, {
       headers: {
-        'Authorization': `Bearer ${access_token}`
+        'Authorization': `Bearer ${accessToken}`
       }
     });
     
@@ -28,7 +28,7 @@ async function verifyIdToken({ access_token, id, domain }) {
     throw new Parse.Error(Parse.Error.OBJECT_NOT_FOUND, 'Mural auth is invalid for this user.');
   } catch(error) {
     console.log('Error in silence', error);
-    return error;
+    throw new Parse.Error(Parse.Error.OBJECT_NOT_FOUND, 'Mural auth is invalid for this user.');
   }
 }
 
